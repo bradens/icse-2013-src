@@ -27,31 +27,29 @@ braden@uvic.ca}
 \maketitle
 
 \begin{abstract}
-As software systems get more complex, the companies developing them consist of larger teams and therefore resulting in more complex communication artifacts.  As these software systems grow, so does the impact of every action to the product.  To prevent software failure created by this growth and complexity, companies need to find out more efficient and effective ways to communicate.  The method used in this paper presents developer communication in the form of social networks of which properties can be used to detect software failures.\end{abstract}
+As software systems get more complex, the companies developing them consist of larger teams and therefore results in more complex communication artifacts.  As these software systems grow, so does the impact of every action to the product.  To prevent software failure created by this growth and complexity, companies need to find more efficient and effective ways to communicate.  The method used in this paper presents developer communication in the form of social networks of which have properties that can be used to detect software failures.\end{abstract}
 
 \section{Introduction}
 
 % Setup problem
-Miscommunication among contributors during software development can lead to software failures, causing billions of lost dollars or even lethal accidents \cite{Wolf:2009:PBF:1555001.1555017}. Larger products and teams
-are inherently complex, making achieving high quality more difﬁcult. To ease this difﬁculty developers use collaborative development environments (CDE) such as BugZilla, Jira etc. These systems provide bug reports and other communication artifacts which establish a medium for better contributor communication. For this study, we deﬁne a \emph{failure-inducing} communication pattern to be a pair of contributors that have a high chance of creating a \emph{fix-inducing change}.  In addition, we define a \emph{changeset} as a set of one or more changes to resources by one developer.  Building social networks, we study the participants and resultant snapshot of the project at that changeset level, to determine if there are any \emph{failure-inducing} patterns of communication present.
+Miscommunication among contributors during software development can lead to software failures, causing billions of lost dollars or even lethal accidents \cite{Wolf:2009:PBF:1555001.1555017}. Larger products and teams are inherently complex, making achieving high quality more difficult. To ease this difficulty developers use collaborative development environments (CDE) such as BugZilla, Jira etc. These systems provide bug reports and other communication artifacts which establish a medium for better contributor communication. For this study, we define a \emph{failure-inducing} communication pattern to be a pair of contributors that have a high chance of creating a \emph{fix-inducing change}.  In addition, we define a \emph{changeset} as a set of one or more changes to resources by one developer.  After building social networks, we study the participants and resultant snapshot of the project at that changeset level.  We do so to determine if there are any \emph{failure-inducing} patterns of communication present.
 
 % Other research 
-In order to create the required networks, we link changesets to communication, similar to Wolf et. al where they link developer networks to build failures\cite{4721184}.  Other researchers such as Bettenburg et al. have done work to link communication artifacts to source code \cite{Bettenburg:2008:ESI:1370750.1370757}.  As well Sliwerski et al. have tried to link fixes(changesets) to their corresponding bug reports \cite{Sliwerski:2005:CIF:1083142.1083147}.  These studies can assist us to understand the direct impact of the communication, and all the effected artifacts.  
+In order to create the required networks, we link changesets to communication, similar to Wolf et. al where they link developer networks to build failures \cite{4721184}.  Other researchers such as Bettenburg et al. have done work to link communication artifacts to source code \cite{Bettenburg:2008:ESI:1370750.1370757}.  As well, Sliwerski et al. have tried to link bug-fix changesets to their corresponding bug reports \cite{Sliwerski:2005:CIF:1083142.1083147}.  These studies can assist us in understanding the direct impact of the communication, and all the effected artifacts.  
 
-% SHOULD reference another section which has the method of making social networks
 % Question
-We construct social networks on a changeset level over a project's lifetime, and then analyze the history of networks for potential patterns, defined as an unordered pair of contributors of communication.  This drives the question \textit{"Can we identify failure-inducing communication patterns in social networks based on changesets and communications artifacts?"} 
+We construct social networks on a changeset level over a project's lifetime as described in Section~\ref{sec:socialnetworks}; then analyze the history of networks for potential patterns, defined as an unordered pair of contributors of communication.  This drives the question \textit{"Can we identify failure-inducing communication patterns in social networks based on changesets and communications artifacts?"} 
 
 % Method
-This paper details our approach at linking social networks to changes, and evaluating their usability for the detection of potentially failure-inducing communication patterns. These include certain problematic groups of participants, or problem areas of a project that require more communication that others due to a more complex technical background.
+This paper details our approach towards linking social networks to changes, and evaluating their usability for the detection of potentially failure-inducing communication patterns. These include certain problematic groups of participants, or problem areas of a project that require more communication that others due to a more complex technical background.
 
 \section{Approach}
-Our goal is to detect potentially failure-inducing patterns in social networks, and in the following sections we describe our methods used to detect these patterns by examining changeset based social networks, resulting in a repository and tool independent process. 
+Our goal is to detect potentially failure-inducing patterns in social networks.  In the following sections we describe our methods used to detect these patterns by examining changeset based social networks, resulting in a repository and tool independent process.  The social networks are created by using contributors as nodes and communication as edges, constructed using the parsed social data in  Section~\ref{sec:parse}.
 
-\subsection{Linking Social Data to changesets}
+\subsection{Linking Social Data to Changesets}
 Our goal is to isolate all the communication artifacts that are related to each changeset.  
 \subsubsection{Analyzing changeset Message}
-First we link by checking the changeset comment for communication related identiﬁers, usually unique to the speciﬁc project. When a strict match to this identiﬁer is found, we construct a link between this changeset and the resulting issue (bug), similar to Sliwerski et al. \cite{Sliwerski:2005:CIF:1083142.1083147}.
+First, the changeset comments are checked for communication related identiﬁers, usually unique to the specific project. When a strict match to this identifier is found, we construct a link between this changeset and the resulting issue (bug), similar to Sliwerski et al. \cite{Sliwerski:2005:CIF:1083142.1083147}.
 
 \begin{figure}[b!]
 \centering
@@ -60,8 +58,8 @@ First we link by checking the changeset comment for communication related identi
 \end{figure}
 
 \subsubsection{Parsing Communication Artifacts}
-Second, after parsing changeset comments, we use another method to link the communication to source files.  We choose a set of communication artifacts that are within a certain project-specific date-range from the selected changeset.  We continue by parsing the communication artifacts for \textit{Stacktraces, Patches}, and \textit{Code Snippets} using similar methods as Bettenburg et al. \cite{Bettenburg:2008:ESI:1370750.1370757}.  We create confidence of each link based on the percentage of matched content.  This confidence is calculated by taking the ratio of matched code from the code snippet versus the total size of the code snippet. Once the links to files are created, we then check over the changesets that alter those files, and construct a link when one exists.  
-
+\label{sec:parse}
+Second, after parsing changeset comments, another method is used to link the communication artifacts to source files.  A set of communication artifacts are chosen that are within a certain project-specific date-range from the selected changeset.  Next, the communication artifacts are parsed for \textit{Stacktraces, Patches}, and \textit{Code Snippets} using similar methods as Bettenburg et al. \cite{Bettenburg:2008:ESI:1370750.1370757}.  Finally, a link is created with a confidence based on the percentage of matched content.  This confidence is calculated by taking the ratio of matched code from the code snippet versus the total size of the code snippet. Once the links to files are created, the changesets that alter those files are linked to the communication artifacts.
 
 % FIX THIS FIGURE to have the definitions of each side
 \begin{figure}[t!]
@@ -73,6 +71,7 @@ Second, after parsing changeset comments, we use another method to link the comm
 In Figure 2, for example, there are links created between \emph{changeset 1} and \emph{Comment 1}, since there is a \emph{Stacktrace} in \emph{Comment 1} that contains a match to the filename \emph{'A.java'} in \emph{changeset 1}.  This will create a link between artifact and changeset, allowing us to determine the impact of the social network created by these communication artifacts surrounding a changeset.
 
 \subsection{Creating Social Networks} 
+\label{sec:socialnetworks}
 Since our goal is to create the networks that are related to a single changeset, our strategy to construct the networks is similar to Wolf et al \cite{4721184}.  The approach taken is repository and tool-independent, and results in networks composed of nodes and edges where the nodes are unique people involved in the communication and the edges are a representation of the communication between those people at the given changeset.  We create these edges like \emph{(Adam, Bart)} where \emph{Adam, Bart} are given by the creators of the artifacts that were linked.   
 
 \subsection{Determining Fix-Inducing Changes}
