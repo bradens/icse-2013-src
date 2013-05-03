@@ -1,16 +1,13 @@
-% This will be the main document for the Social Networks paper to
-% be written by the Eggnet team of Jordan Ell, Triet Huynh and Braden
-% Simpson in association with Adrian Schroeter and Daniela Damian.
 \documentclass[conference]{IEEEtran}
 \usepackage{graphicx}
 \usepackage{amsmath}
+\usepackage{balance}
 
 % Correct bad hyphenation here
 \hyphenation{op-tical net-works semi-conduc-tor}
 
 % Begin the paper here
 \begin{document}
-
 
 % Paper title
 % Can use linebreaks \\ within to get better formatting as desired
@@ -19,8 +16,7 @@
 % Authors names
 \author{\IEEEauthorblockN{
 Braden Simpson}
-\IEEEauthorblockA{University of Victoria,
-Victoria, British Columbia}
+\IEEEauthorblockA{Department of Computer Science, University of Victoria\\Victoria, BC, Canada}
 braden@uvic.ca}
 
 % make the title area
@@ -48,8 +44,8 @@ Our goal is to detect potentially failure-inducing patterns in social networks. 
 
 \subsection{Linking Social Data to Changesets}
 Our goal is to isolate all the communication artifacts that are related to each changeset.  
-\subsubsection{Analyzing changeset Message}
-First, the changeset comments are checked for communication related identiﬁers, usually unique to the specific project. When a strict match to this identifier is found, we construct a link between this changeset and the resulting issue (bug), similar to Sliwerski et al. \cite{Sliwerski:2005:CIF:1083142.1083147}.
+\subsubsection{Analyzing Changeset Message}
+First, the changeset comments are checked for communication related identifiers, usually unique to the specific project. When a strict match to this identifier is found, we construct a link between this changeset and the resulting issue (bug), similar to Sliwerski et al. \cite{Sliwerski:2005:CIF:1083142.1083147}.
 
 \begin{figure}[b!]
 \centering
@@ -59,9 +55,8 @@ First, the changeset comments are checked for communication related identiﬁers
 
 \subsubsection{Parsing Communication Artifacts}
 \label{sec:parse}
-Second, after parsing changeset comments, another method is used to link the communication artifacts to source files.  A set of communication artifacts are chosen that are within a certain project-specific date-range from the selected changeset.  Next, the communication artifacts are parsed for \textit{Stacktraces, Patches}, and \textit{Code Snippets} using similar methods as Bettenburg et al. \cite{Bettenburg:2008:ESI:1370750.1370757}.  Finally, a link is created with a confidence based on the percentage of matched content.  This confidence is calculated by taking the ratio of matched code from the code snippet versus the total size of the code snippet. Once the links to files are created, the changesets that alter those files are linked to the communication artifacts.
+Second, after parsing changeset comments, another method is used to link the communication artifacts to source files.  A set of communication artifacts are chosen that are within a certain project-specific date-range from the selected changeset.  Next, the communication artifacts are parsed for \textit{Stacktraces, Patches}, and \textit{Code Snippets} using similar methods to Bettenburg et al. \cite{Bettenburg:2008:ESI:1370750.1370757}.  Finally, a link is created with a confidence based on the percentage of matched content.  This confidence is calculated by taking the ratio of matched code from the code snippet versus the total size of the code snippet. Once the links to files are created, the changesets that alter those files are linked to the communication artifacts.
 
-% FIX THIS FIGURE to have the definitions of each side
 \begin{figure}[t!]
 \centering
 \includegraphics[width=1.0\columnwidth]{Items}
@@ -78,9 +73,9 @@ Since our goal is to create the networks that are related to a single changeset,
 We qualify each changeset as either a pass or fail, pass meaning that it was a changeset that did not introduce a bug, and conversely a fail is a changeset that introduced a bug.  We used the method from Sliwerski et al \cite{Sliwerski:2005:CIF:1083142.1083147} to infer fix-inducing changes. 
 
 \section{Results}
-We used Hibernate-ORM\footnote{An open source Java library that is used for creating object-relational mappings for data-modeling, http://hibernate.org} as a case study.  It is hosted on GitHub, and managed by Jira\footnotemark[2].  Our project requires that both the repository information and the CDE data is able to be mined in order to create the social networks.\\
+We used Hibernate-ORM\footnote{An open source Java library that is used for creating object-relational mappings for data-modeling, http://hibernate.org} as a case study.  It is hosted on GitHub, and managed by Jira\footnotemark[2].  Our project requires that both the repository information and the CDE data is able to be mined in order to create the social networks.
 
-We classify a failure-inducing pattern by running the statistics through the following formula to calculate the \emph{Failure Index}, FI of a pattern.\\
+We classify a failure-inducing pattern by running the statistics through the following formula to calculate the \emph{Failure Index}, FI of a pattern.
 
 \begin{equation}
 \text{FI} = \frac{\text{pattern}_{failed}/ \text{total}_{failed}}{\text{pattern}_{failed} / \text{total}_{failed} + \text{pattern}_{success} /\text{total}_{success}}
@@ -91,6 +86,7 @@ Before calculating the FI of a pattern, we perform the Fisher Exact Value test t
 For the Hibernate-ORM project, which had a total of 3968 changesets, we were able to link 3076 of them to communications artifacts.  From these links, we could create 4537 distinct patterns of communication from the 5040 distinct contributors to the project.  Of those patterns, 178 were significant, and 55 could be identified as failure-inducing. 
 
 \begin{table}[t]
+\caption{Five selected changeset patterns, ordered by Failure Index.\label{tab:ratio}}
 \begin{center}
 \begin{tabular}{@{\hspace{.2cm}}ccc@{\hspace{.75cm}}c@{\hspace{.2cm}} l  l  l  l  l }
 \hline
@@ -104,7 +100,6 @@ Pattern & Passed & Failed & FI & P-Value\\
 \hline
 \end{tabular}
 \end{center}
-\caption{Five selected changeset patterns, ordered by Failure Index.\label{tab:ratio}}
 \end{table}
 
 \section{Limitations}
@@ -114,8 +109,8 @@ One limitation of our study was that we used a large open source project, which 
 There are several other studies that suggest that better communication practices result in a more successful build rate \cite{Wolf:2009:PBF:1555001.1555017}\cite{Schroter:2010:PBO:1810295.1810456}\cite{4721184}\cite{Zimmermann:2008:PDU:1368088.1368161}, however they perform these studies at a build level, rather than changeset.  Our study suggests that each changeset can be individually analyzed and that failure-inducing patterns of communication (either present or absent) can be extracted.  These patterns can then be used to offer potential recommendations when they are found.  In the future we want to perform another study on a closed source project with a much smaller group of contributors, as the patterns would be more significant, and allow for more analysis. As well, we plan on evaluating the congruence between technical networks and the social networks created in this study to identify other possible failure-inducing patterns. 
 
 \bibliographystyle{IEEEtran}
+\balance
 \bibliography{paper}
 
-% End of the paper
 \end{document}
 
